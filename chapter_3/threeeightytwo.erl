@@ -5,6 +5,8 @@ evaluate({plus, LHS, RHS}) ->
 	evaluate(LHS) + evaluate(RHS);
 evaluate({minus, LHS, RHS}) ->
 	evaluate(LHS) - evaluate(RHS);
+evaluate({unary_minus, Expression}) ->
+	-1 * evaluate(Expression);
 evaluate({num, Number}) ->
 	Number.
 
