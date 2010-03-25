@@ -7,9 +7,13 @@ getNextExpressionUntil(Stack, String, Until) ->
 	{Expression, ModifiedStack, StringLeft} = getNextExpression(Stack, String),
 	getNextExpressionUntil([Expression|ModifiedStack], StringLeft, Until).
 
-getNextOperator(Op, [PreviousExpression|RemainingStack], String) ->
+getNextDoubleOperator(Op, [PreviousExpression|RemainingStack], String) ->
 	{NextExpression, ModifiedStack, RemainingString} = getNextExpression(RemainingStack, String),
 	{{Op, PreviousExpression, NextExpression}, ModifiedStack, RemainingString}.
+
+getNextSingleOperator(Op, Stack, String) ->
+	{NextExpression, [], RemainingString} = getNextExpression([], String),
+	{{Op, NextExpression}, Stack, RemainingString}.
 
 getNextExpression(Stack, [$(|String]) ->
 	{Expression, [], RemainingString1} = getNextExpression([], String),
@@ -17,9 +21,12 @@ getNextExpression(Stack, [$(|String]) ->
 	{NextExpression, Stack, RemainingString2};
 
 getNextExpression(Stack, [$+|String]) ->
-	getNextOperator(plus, Stack, String);
+	getNextDoubleOperator(plus, Stack, String);
 getNextExpression(Stack, [$-|String]) ->
-	getNextOperator(minus, Stack, String);
+	getNextDoubleOperator(minus, Stack, String);
+getNextExpression(Stack, [$~|String]) ->
+	getNextSingleOperator(unary_minus, Stack, String);
+	
 
 % 0=48 9=57
 getNextExpression(Stack, [H|String]) when H >= 48 , H =< 57->
