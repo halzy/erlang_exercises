@@ -10,9 +10,11 @@ evaluate({unary_minus, Expression}) ->
 evaluate({num, Number}) ->
 	Number.
 
-evaluator([]) ->
-	ok;
-evaluator([Expression|List]) ->
+eval(Results, []) ->
+	lists:reverse(Results);
+eval(Results, [Expression|List]) ->
 	Result = evaluate(Expression),
-	io:format("~p = ~p~n", [Result, Expression]),
-	evaluator(List).
+	eval([Result|Results], List).
+
+evaluator(Expressions) ->
+	eval([], Expressions).

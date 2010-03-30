@@ -45,7 +45,4 @@ parseString(String) ->
 	parseString([], String).
 
 parser(String) ->
-	io:format("String: ~p~n", [String]),
-	Stack = parseString(String),
-	io:format("Pretty: ~p~n", [Stack]),
-	Stack.
+	parseString(String).

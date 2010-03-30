@@ -23,9 +23,10 @@ prettyPrint({unary_minus, Expression}) ->
 prettyPrint({num, Number}) ->
 	[Number + 48].
 
-print([]) ->
-	ok;
-print([Expression|List]) ->
+pretty(Results, []) ->
+	lists:reverse(Results);
+pretty(Results, [Expression|List]) ->
 	Result = prettyPrint(Expression),
-	io:format("~p = ~p~n", [Result, Expression]),
-	print(List).
+	pretty([Result|Results], List).
+print(Expressions) ->
+	pretty([], Expressions).
