@@ -72,13 +72,12 @@ makePrintFormat(WordIndex) ->
 
 prettyPrintWordIndex(WordIndex) ->
 	PrintFormat = makePrintFormat(WordIndex),
-	io:format("~s~n", [PrintFormat]),
 	PrintWord = fun({Word, LineNumbers}, Format) ->
 		PrettyLineNumbers = makePrettyLineNumbers(LineNumbers),
-		io:format(PrintFormat, [Word, PrettyLineNumbers]),
+		io:format(list_to_binary(PrintFormat), [Word, PrettyLineNumbers]),
 		Format
 	end,
-	lists:foldr(PrintWord, PrintFormat, WordIndex).
+	lists:foldr(PrintWord, PrintFormat, lists:reverse(lists:keysort(1,WordIndex))).
 
 getPrettyLineNumbers(Result, []) ->
 	Result;
@@ -92,3 +91,4 @@ getPrettyLineNumbers(Result, [{Start,End}|LineNumbers]) ->
 makePrettyLineNumbers(LineNumbers) ->
 	RangedLineNumbers = getPrettyLineNumbers([], LineNumbers),
 	string:join(RangedLineNumbers, ", ").
+
