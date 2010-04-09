@@ -27,22 +27,29 @@ wordLineToString([{Word1, _Length}|Line], WordNumber, String) ->
 	Word2 = [" "|Word1],
 	wordLineToString(Line, WordNumber+1, [Word2|String]).
 
+% end case, out of words
 makeWordLines([], _Width, _WidthLeft, [LastLine|Lines]) ->
 	ReversedLastLine = lists:reverse(LastLine),
 	AllLines = [ReversedLastLine|Lines],
 	lists:reverse(AllLines);
-makeWordLines([{_Word, Length}=Token|Tokens], Width, WidthLeft, [[]|Lines]) when Length =< WidthLeft ->
+% if the line is currently empty, and the word length is =< than the length of the line
+makeWordLines([{_Word, Length}=Token|Tokens], Width, WidthLeft, [[]|Lines]) when Length =< Width ->
 	makeWordLines(Tokens, Width, WidthLeft-Length, [[Token]|Lines]);
+% line with words, and the word length is =< the length left
 makeWordLines([{_Word, Length}=Token|Tokens], Width, WidthLeft, [LastLine|Lines]) when Length =< WidthLeft ->
 	makeWordLines(Tokens, Width, WidthLeft-Length-1, [[Token|LastLine]|Lines]);
+% if the line is empty, and the word length is > the width of the line
 makeWordLines([{_Word, Length}=Token|Tokens], Width, _WidthLeft, [[]|Lines]) when Length > Width ->
 	makeWordLines(Tokens, Width, 0, [[Token]|Lines]);
+% if the line is not empty and the length of the word is > the width of the line
 makeWordLines([{_Word, Length}|_Tail]=Tokens, Width, _WidthLeft, Lines) when Length > Width ->
 	makeWordLines(Tokens, Width, Width, [[]|Lines]);
+% if there is no more space on the line, reverse the tokens on the last line and push a new one on the stack
 makeWordLines(Tokens, Width, _WidthLeft, [LastLine|Lines]) ->
 	ReversedLastLine = lists:reverse(LastLine),
 	PreviousLines = [ReversedLastLine|Lines],
 	makeWordLines(Tokens, Width, Width, [[]|PreviousLines]);
+% initial case where we have no existing lines on the stack
 makeWordLines(Tokens, Width, WidthLeft, []) ->
 	makeWordLines(Tokens, Width, WidthLeft, [[]]).
 
