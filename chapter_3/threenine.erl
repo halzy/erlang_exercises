@@ -11,7 +11,6 @@ index(Filename) ->
 
 indexFile(IoDevice) ->
 	RawDocument = loadRawDocument([], IoDevice),
-	file:close(IoDevice),
 	Document = loadDocument(RawDocument),
 	WordIndex1 = indexWords(Document),
 	WordIndex2 = updateWordIndexLineNumbers(WordIndex1),
