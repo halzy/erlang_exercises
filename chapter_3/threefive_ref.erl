@@ -1,4 +1,4 @@
--module(threefive).
+-module(threefive_ref).
 -export([filter/2, reverse/1, concatenate/1, flatten/1]).
 
 reverse(To, []) ->
@@ -25,14 +25,22 @@ filter(List, Number) ->
 
 flattenHelper(Dst, []) ->
 	Dst;
+flattenHelper(Dst, [[[]|HeadTail]|T]) ->
+	flattenHelper(Dst, [HeadTail|T]);
+flattenHelper(Dst, [[HeadTop|HeadTail]|T]) ->
+	NewList1 = [HeadTail|T],
+	NewList2 = [HeadTop|NewList1],
+	flattenHelper(Dst, NewList2);
+flattenHelper(Dst, [[]|T]) ->
+	flattenHelper(Dst, T);
 flattenHelper(Dst, [H|T]) ->
-	Dst2 = flattenHelper(Dst, H),
-	flattenHelper(Dst2, T);
+	flattenHelper([H|Dst], T);
 flattenHelper(Dst, Item) ->
 	[Item|Dst].
 
 flatten(Lists) ->
 	reverse(flattenHelper([], Lists)).
+
 
 
 
