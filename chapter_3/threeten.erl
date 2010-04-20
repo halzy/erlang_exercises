@@ -11,15 +11,20 @@ justifyText(Text, Width) ->
 	WordLines = makeWordLines(TokenText, Width, Width, []),
 	justifyWordLines(WordLines, Width).
 
-justifyWordLines([], _Width) ->
-	ok;
-justifyWordLines([[]|WordLines], Width) ->
-	justifyWordLines(WordLines, Width);
-justifyWordLines([Line|WordLines], Width) ->
-	SpacesPerGap = spacesPerGap(Line, Width),
+justifyWordLines(WordLines, Width) ->
+	justifyWordLines(WordLines, Width, []).
+
+justifyWordLines([], _Width, JustifiedLines) ->
+	lists:flatten(lists:reverse(JustifiedLines));
+justifyWordLines([[]|WordLines], Width, JustifiedLines) ->
+	justifyWordLines(WordLines, Width, JustifiedLines);
+justifyWordLines([Line|WordLines], Width, JustifiedLines) ->
+	SpacesPerGap = case length(WordLines) of
+		0 -> 0; % the last line isn't justified
+		_Other -> spacesPerGap(Line, Width)
+	end,
 	JustifiedString = lists:reverse(wordLineToString(Line, 0, "", SpacesPerGap, 0)),
-	io:format("~s", [JustifiedString]),
-	justifyWordLines(WordLines, Width).
+	justifyWordLines(WordLines, Width, [JustifiedString|JustifiedLines]).
 
 spacesPerGap([], _Width) ->
 	0;
