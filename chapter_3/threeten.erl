@@ -102,10 +102,10 @@ measureTokens(Measured, [Token|Tokens]) ->
 	
 testProcess(Width) ->
 	{ok, Text} = readFileText('threeten.text'),
-	textProcess(Text, Width).
+	io:format("~s~n", [textProcess(Text, Width)]).
 testJustify(Width) ->
 	{ok, Text} = readFileText('threeten.text'),
-	justifyText(Text, Width).
+	io:format("~s~n", [justifyText(Text, Width)]).
 	
 readFileText(Filename) ->
         case file:open(Filename, read) of
