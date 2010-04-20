@@ -54,7 +54,6 @@ wordLineToString([{Word1, _Length}|Line], WordNumber1, String, SpacesPerGap, Gap
 	WordNumber2 = WordNumber1+1,				% figure out the current word number
 	Spaces = erlang:trunc(GapLeftover1)		,	% drop the decimal places
 	GapLeftover2 = GapLeftover1 - Spaces + SpacesPerGap,	% adjust the remaining leftover
-	io:format("~p ~p ~p~n", [Spaces, GapLeftover1, GapLeftover2]),
 	Word2 = [string:copies(" ", Spaces+1)|Word1],
 	wordLineToString(Line, WordNumber2, [Word2|String], SpacesPerGap, GapLeftover2).
 
