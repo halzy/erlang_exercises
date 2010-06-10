@@ -11,7 +11,6 @@
 -record(state, {
 	  free = [] :: [frequency()],
 	  allocated = [] :: [used_frequency()], 
-	  monitor = [] :: [any()], 
 	  shutting_down = false :: boolean(),
 	  max_allocations = 3 :: pos_integer()
 	 }).
@@ -25,11 +24,7 @@ start() ->
 -spec init() -> ok.
 init() ->
     State = #state{
-      free=get_frequencies(), 
-      allocated=[], 
-      shutting_down=false, 
-      monitor=[],
-      max_allocations=3
+      free=get_frequencies()
      },
     loop(State).
 
@@ -89,9 +84,6 @@ loop(#state{shutting_down=ShuttingDown}=State) ->
 	{request, Pid, deallocate_all} ->
 	    UpdatedState = deallocate_all(State, Pid),
 	    reply(Pid, ok),
-	    loop(UpdatedState);
-	{'EXIT', Pid, _Reason} ->
-	    UpdatedState = deallocate_all(State, Pid),
 	    loop(UpdatedState);
 	{request, Pid, _} when true == ShuttingDown ->
 	    reply(Pid, {error, shutting_down}),
