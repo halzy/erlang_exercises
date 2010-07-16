@@ -1,6 +1,6 @@
 -module(event_manager).
 -export([start/2 ,stop/1]).
--export([add_handler/3, delete_handler/2, get_data/2, send_event/2]).
+-export([add_handler/3, delete_handler/2, get_data/2, send_event/2, swap_handlers/3]).
 -export([init/1]).
 
 start(Name, HandlerList) ->
@@ -40,6 +40,9 @@ get_data(Name, Handler) ->
 send_event(Name, Event) ->
     call(Name, {send_event, Event}).
 
+swap_handlers(Name, OldHandler, NewHandler) ->
+    call(Name, {swap_handlers, {OldHandler, NewHandler}}).
+
 handle_msg({add_handler, Handler, InitData}, LoopData) ->
     {ok, [{Handler, Handler:init(InitData)}|LoopData]};
 handle_msg({delete_handler, Handler}, LoopData) ->
@@ -59,7 +62,16 @@ handle_msg({get_data, Handler}, LoopData) ->
 	    {{data, Data}, LoopData}
     end;
 handle_msg({send_event, Event}, LoopData) ->
-    {ok, event(Event, LoopData)}.
+    {ok, event(Event, LoopData)};
+handle_msg({swap_handlers, {OldHandler, NewHandler}}, LoopData) ->
+    DeleteReply = handle_msg({delete_handler, OldHandler}, LoopData),
+    case DeleteReply of
+	{{error, _}, _} ->
+	    DeleteReply;
+	{{data, InitData}, NewLoopData} ->
+	    handle_msg({add_handler, NewHandler, InitData}, NewLoopData)
+    end.
+
 
 event(_Event, []) ->
     [];
